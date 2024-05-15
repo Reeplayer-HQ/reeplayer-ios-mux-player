@@ -17,6 +17,7 @@
 		629D5B642BF4C9B00078119F /* ReeMuxPlayerRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629D5B632BF4C9B00078119F /* ReeMuxPlayerRepresentable.swift */; };
 		629D5B662BF4C9C90078119F /* ReeMuxPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629D5B652BF4C9C90078119F /* ReeMuxPlayerView.swift */; };
 		629D5B682BF4CB800078119F /* ReeMuxPlayerTimerObserverType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629D5B672BF4CB800078119F /* ReeMuxPlayerTimerObserverType.swift */; };
+		629D5B6B2BF4CD600078119F /* MuxPlayerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 629D5B6A2BF4CD600078119F /* MuxPlayerSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				629D5B6B2BF4CD600078119F /* MuxPlayerSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +114,9 @@
 			dependencies = (
 			);
 			name = ReeMuxPlayer;
+			packageProductDependencies = (
+				629D5B6A2BF4CD600078119F /* MuxPlayerSwift */,
+			);
 			productName = ReeMuxPlayer;
 			productReference = 629D5B3F2BF4C42E0078119F /* ReeMuxPlayer.framework */;
 			productType = "com.apple.product-type.framework";
@@ -140,6 +145,9 @@
 				Base,
 			);
 			mainGroup = 629D5B352BF4C42E0078119F;
+			packageReferences = (
+				629D5B692BF4CD600078119F /* XCRemoteSwiftPackageReference "mux-player-swift" */,
+			);
 			productRefGroup = 629D5B402BF4C42E0078119F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -308,7 +316,7 @@
 		629D5B472BF4C42E0078119F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -339,7 +347,7 @@
 		629D5B482BF4C42E0078119F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -389,6 +397,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		629D5B692BF4CD600078119F /* XCRemoteSwiftPackageReference "mux-player-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/muxinc/mux-player-swift.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		629D5B6A2BF4CD600078119F /* MuxPlayerSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 629D5B692BF4CD600078119F /* XCRemoteSwiftPackageReference "mux-player-swift" */;
+			productName = MuxPlayerSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 629D5B362BF4C42E0078119F /* Project object */;
 }

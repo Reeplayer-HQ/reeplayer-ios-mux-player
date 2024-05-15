@@ -7,12 +7,13 @@
 
 import AVKit
 import Combine
+import MuxPlayerSwift
 import SwiftUI
 
 public struct ReeMuxPlayerRepresentable: UIViewControllerRepresentable {
     // MARK: Variables
 
-    let url: URL?
+    let playbackId: String?
     private let playerActionPublisher: PassthroughSubject<ReeMuxPlayerPlayerActionPublisherType, Never>?
     private let statusObserver: PassthroughSubject<ReeMuxPlayerStatusObserverType, Never>?
     private let timerObserver: PassthroughSubject<ReeMuxPlayerTimerObserverType, Never>?
@@ -23,13 +24,13 @@ public struct ReeMuxPlayerRepresentable: UIViewControllerRepresentable {
     // MARK: Life Cycle
 
     public init(
-        url: URL?,
+        playbackId: String?,
         playerActionPublisher: PassthroughSubject<ReeMuxPlayerPlayerActionPublisherType, Never>?,
         statusObserver: PassthroughSubject<ReeMuxPlayerStatusObserverType, Never>?,
         timerObserver: PassthroughSubject<ReeMuxPlayerTimerObserverType, Never>?,
         options: ReeMuxPlayerOptions?
     ) {
-        self.url = url
+        self.playbackId = playbackId
         self.playerActionPublisher = playerActionPublisher
         self.statusObserver = statusObserver
         self.timerObserver = timerObserver
@@ -49,9 +50,6 @@ public struct ReeMuxPlayerRepresentable: UIViewControllerRepresentable {
         playerViewController.restoresFocusAfterTransition = true
         playerViewController.updatesNowPlayingInfoCenter = true
 
-        // Set the player
-        playerViewController.player = context.coordinator.player
-
         // Add time observer
         playerViewController.delegate = context.coordinator
 
@@ -60,7 +58,7 @@ public struct ReeMuxPlayerRepresentable: UIViewControllerRepresentable {
 
     public func updateUIViewController(_ uiViewController: AVPlayerViewController, context: Context) {
         // Check if the url has changed
-        context.coordinator.checkUrlChange(url: url)
+        context.coordinator.checkPlaybackIdChange(playbackId: playbackId)
 
         // There may be updates to the options, so we need to update the coordinator
         context.coordinator.options = options

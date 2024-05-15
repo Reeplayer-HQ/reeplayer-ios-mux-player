@@ -11,7 +11,7 @@ import SwiftUI
 public struct ReeMuxPlayerView: View {
     // MARK: Variables
 
-    private let url: URL?
+    private let playbackId: String?
     private let playerActionPublisher: PassthroughSubject<ReeMuxPlayerPlayerActionPublisherType, Never>?
     private let statusObserver: PassthroughSubject<ReeMuxPlayerStatusObserverType, Never>?
     private let timerObserver: PassthroughSubject<ReeMuxPlayerTimerObserverType, Never>?
@@ -20,13 +20,13 @@ public struct ReeMuxPlayerView: View {
     // MARK: Life Cycle
 
     public init(
-        url: URL?,
+        playbackId: String?,
         playerActionPublisher: PassthroughSubject<ReeMuxPlayerPlayerActionPublisherType, Never>? = nil,
         statusObserver: PassthroughSubject<ReeMuxPlayerStatusObserverType, Never>? = nil,
         timerObserver: PassthroughSubject<ReeMuxPlayerTimerObserverType, Never>? = nil,
         options: ReeMuxPlayerOptions? = nil
     ) {
-        self.url = url
+        self.playbackId = playbackId
         self.playerActionPublisher = playerActionPublisher
         self.statusObserver = statusObserver
         self.timerObserver = timerObserver
@@ -37,7 +37,7 @@ public struct ReeMuxPlayerView: View {
 
     public var body: some View {
         ReeMuxPlayerRepresentable(
-            url: url,
+            playbackId: playbackId,
             playerActionPublisher: playerActionPublisher,
             statusObserver: statusObserver,
             timerObserver: timerObserver,

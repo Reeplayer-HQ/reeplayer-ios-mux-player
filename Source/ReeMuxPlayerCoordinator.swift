@@ -7,6 +7,7 @@
 
 import AVKit
 import Combine
+import MuxPlayerSwift
 
 public class ReeMuxPlayerCoordinator: NSObject {
     // MARK: Variables
@@ -15,11 +16,12 @@ public class ReeMuxPlayerCoordinator: NSObject {
     private let playerActionPublisher: PassthroughSubject<ReeMuxPlayerPlayerActionPublisherType, Never>?
     private let statusObserver: PassthroughSubject<ReeMuxPlayerStatusObserverType, Never>?
     private let timerObserver: PassthroughSubject<ReeMuxPlayerTimerObserverType, Never>?
-    private var url: URL? = nil
+    private var playbackId: String? = nil
     private let observer = ReeMuxPlayerObserver()
     private var cancellables = Set<AnyCancellable>()
+    private var player: AVPlayer? { playerViewController.player }
 
-    let player = AVPlayer()
+//    let player = AVPlayer()
     var options: ReeMuxPlayerOptions?
 
     // MARK: Life Cycle
@@ -43,11 +45,12 @@ public class ReeMuxPlayerCoordinator: NSObject {
 
         // Set the delegate of the playerViewController and player
         observer.delegate = self
+
+        // Initialize AVplayer and set it playerViewController
+        let player = AVPlayer()
         observer.addTimeControlStatusObserver(toPlayer: player)
         observer.addTimeObserver(toPlayer: player)
-
-        // Set AVPlayer settings
-        player.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+        playerViewController.player = player
 
         // Sink the overlayActionPublisher
         playerActionPublisher?.sink { [weak self] action in
@@ -70,79 +73,87 @@ public class ReeMuxPlayerCoordinator: NSObject {
     }
 
     func removeAllObservers() {
-        if let playerItem = player.currentItem {
-            observer.removeStatusObserver(toPlayerItem: playerItem)
-            observer.removePlayerReachEndObserver(toPlayerItem: playerItem)
+        if let player {
+            if let playerItem = player.currentItem {
+                observer.removeStatusObserver(toPlayerItem: playerItem)
+                observer.removePlayerReachEndObserver(toPlayerItem: playerItem)
+            }
+            observer.removeTimeObserver(fromPlayer: player)
+            observer.removeTimeControlStatusObserver(fromPlayer: player)
         }
-        observer.removeTimeObserver(fromPlayer: player)
-        observer.removeTimeControlStatusObserver(fromPlayer: player)
         observer.delegate = nil
     }
 
     // MARK: URL Methods
 
-    /// Checks if the video URL has changed. If so, it refreshes the video player with the new URL.
-    public func checkUrlChange(url: URL?) {
-        // Check if the url is not nil
-        guard let url = url else {
+    /// Checks if the playbackId has changed. If so, it refreshes the video player with the new playbackId.
+    public func checkPlaybackIdChange(playbackId: String?) {
+        // Check if the playbackId is not nil
+        guard let playbackId = playbackId else {
             cleanVideoPlayer()
             return
         }
 
-        // Check if the url has changed
-        guard url.absoluteString != self.url?.absoluteString else { return }
+        // Check if the playbackId has changed
+        guard playbackId != self.playbackId else { return }
 
-        // Set the new url
-        self.url = url
+        // Set the new playbackId
+        self.playbackId = playbackId
 
-        // Open the video player with the new URL
-        openUrl(url: url)
+        // Open the video player with the new playbackId
+        openPlaybackId(playbackId: playbackId)
     }
 
     /// Opens the video player with the given URL
-    private func openUrl(url: URL) {
+    private func openPlaybackId(playbackId: String) {
         // Remove observers from the current playerItem if exists
-        if let playerItem = player.currentItem {
+        if let playerItem = playerViewController.player?.currentItem {
             observer.removeStatusObserver(toPlayerItem: playerItem)
             observer.removePlayerReachEndObserver(toPlayerItem: playerItem)
         }
 
-        // Create new PlayerItem and replace it with the current one
-        let playerItem = AVPlayerItem(url: url)
-        playerItem.preferredForwardBufferDuration = 10
-        player.replaceCurrentItem(with: playerItem)
+        // Prepare the AVPlayerViewControler with new playbackId
+        playerViewController.prepare(playbackID: playbackId)
 
         // Enable audio session
         enableAudioSession()
-
-        // Set the player's volume and mute status
-        player.isMuted = options?.isMuted ?? false
 
         // Notify the statusObserver that the video player is not ready and is loading
         statusObserver?.send(.PlayerStatusChanged(type: .Loading))
         statusObserver?.send(.VideoStatusChanged(type: .NotReady))
 
+        // Set the player's volume and mute status
+        player?.isMuted = options?.isMuted ?? false
+
+        // Set AVPlayer settings
+        player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
+
         // Add observers to the new playerItem
-        observer.addStatusObserver(toPlayerItem: playerItem)
-        observer.addPlayerReachEndObserver(toPlayerItem: playerItem)
+        if let playerItem = playerViewController.player?.currentItem {
+            observer.addStatusObserver(toPlayerItem: playerItem)
+            observer.addPlayerReachEndObserver(toPlayerItem: playerItem)
+        }
     }
 
     /// Cleans the video player and removes all observers
     private func cleanVideoPlayer() {
-        // Remove observers from the current playerItem
-        if let playerItem = player.currentItem {
+        // Remove observers from the current playerItem if exists
+        if let playerItem = playerViewController.player?.currentItem {
             observer.removeStatusObserver(toPlayerItem: playerItem)
             observer.removePlayerReachEndObserver(toPlayerItem: playerItem)
         }
 
         // Clean the player
-        player.replaceCurrentItem(with: nil)
+        player?.replaceCurrentItem(with: nil)
     }
 
     // MARK: Action Methods
 
     /// Plays the video
     private func playVideo() {
+        // Check if the player exist
+        guard let player = playerViewController.player else { return }
+
         // Check if the video reached the end. If so, seek to the beginning
         if player.currentItem?.duration == player.currentTime() {
             player.seek(to: .zero)
@@ -154,12 +165,18 @@ public class ReeMuxPlayerCoordinator: NSObject {
 
     /// Pauses the video
     private func pauseVideo() {
+        // Check if the player exist
+        guard let player = playerViewController.player else { return }
+
         // Pause the video
         player.pause()
     }
 
     /// Goes to the given milliSeconds
     private func goTo(milliSeconds: Double) {
+        // Check if the player exist
+        guard let player = playerViewController.player else { return }
+
         let time: CMTime = .init(seconds: milliSeconds / 1000, preferredTimescale: 1000)
         player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
     }
@@ -223,6 +240,9 @@ extension ReeMuxPlayerCoordinator: ReeMuxPlayerObserverDelegate {
             switch status {
             case .readyToPlay:
 
+                // Check if the player exist
+                guard let player = playerViewController.player else { return }
+
                 // Notify the statusObserver that the video player is ready
                 self.statusObserver?.send(.VideoStatusChanged(type: .Ready))
 
@@ -248,6 +268,9 @@ extension ReeMuxPlayerCoordinator: ReeMuxPlayerObserverDelegate {
     }
 
     func didPlayerReachEnd() {
+        // Check if the player exist
+        guard let player = playerViewController.player else { return }
+
         guard let loopVideoWhenEndReached = options?.loopVideoWhenEndReached, loopVideoWhenEndReached else { return }
         player.seek(to: .zero)
         player.play()

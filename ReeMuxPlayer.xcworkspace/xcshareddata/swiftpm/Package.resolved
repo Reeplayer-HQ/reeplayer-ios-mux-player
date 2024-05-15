@@ -1,0 +1,33 @@
+{
+  "originHash" : "7c8ea267f50eda69d646fe8372f93796f14c3f8c550295e39c3767034c144b49",
+  "pins" : [
+    {
+      "identity" : "mux-player-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/muxinc/mux-player-swift.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "b0d82eefa38d735824fb076de701856410370db0"
+      }
+    },
+    {
+      "identity" : "mux-stats-sdk-avplayer",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/muxinc/mux-stats-sdk-avplayer",
+      "state" : {
+        "revision" : "0502d923df4100ffd433320b932952883136665c",
+        "version" : "3.4.2"
+      }
+    },
+    {
+      "identity" : "stats-sdk-objc",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/muxinc/stats-sdk-objc.git",
+      "state" : {
+        "revision" : "982feb93c4601684b5e3eef9ad1a036e3ec117c7",
+        "version" : "4.6.0"
+      }
+    }
+  ],
+  "version" : 3
+}
