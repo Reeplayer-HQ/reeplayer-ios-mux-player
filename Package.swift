@@ -5,15 +5,20 @@ import PackageDescription
 
 let package = Package(
     name: "ReeMuxPlayer",
-    dependencies: [
-        .package(url: "https://github.com/muxinc/mux-player-swift.git", branch: "main"),
-    ],
+    platforms: [.iOS(.v15)],
     products: [
         .library(
             name: "ReeMuxPlayer",
             targets: ["ReeMuxPlayer"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/muxinc/mux-player-swift.git", branch: "main"),
+    ],
     targets: [
         .target(
-            name: "ReeMuxPlayer"),
+            name: "ReeMuxPlayer",
+            dependencies: [
+                .product(name: "MuxPlayerSwift", package: "mux-player-swift"),
+            ]
+        ),
     ])
