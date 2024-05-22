@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		629D5B522BF4C6C20078119F /* ReeMuxPlayerOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629D5B512BF4C6C20078119F /* ReeMuxPlayerOptions.swift */; };
+		629D5B522BF4C6C20078119F /* ReeMuxPlayerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629D5B512BF4C6C20078119F /* ReeMuxPlayerItem.swift */; };
 		629D5B542BF4C8170078119F /* ReeMuxPlayerPlayerActionPublisherType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629D5B532BF4C8170078119F /* ReeMuxPlayerPlayerActionPublisherType.swift */; };
 		629D5B562BF4C8FA0078119F /* ReeMuxPlayerStatusObserverType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629D5B552BF4C8FA0078119F /* ReeMuxPlayerStatusObserverType.swift */; };
 		629D5B582BF4C9150078119F /* ReeMuxPlayerPlayerStatusType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629D5B572BF4C9150078119F /* ReeMuxPlayerPlayerStatusType.swift */; };
@@ -22,7 +22,7 @@
 
 /* Begin PBXFileReference section */
 		629D5B3F2BF4C42E0078119F /* ReeMuxPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ReeMuxPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		629D5B512BF4C6C20078119F /* ReeMuxPlayerOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReeMuxPlayerOptions.swift; sourceTree = "<group>"; };
+		629D5B512BF4C6C20078119F /* ReeMuxPlayerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReeMuxPlayerItem.swift; sourceTree = "<group>"; };
 		629D5B532BF4C8170078119F /* ReeMuxPlayerPlayerActionPublisherType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReeMuxPlayerPlayerActionPublisherType.swift; sourceTree = "<group>"; };
 		629D5B552BF4C8FA0078119F /* ReeMuxPlayerStatusObserverType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReeMuxPlayerStatusObserverType.swift; sourceTree = "<group>"; };
 		629D5B572BF4C9150078119F /* ReeMuxPlayerPlayerStatusType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReeMuxPlayerPlayerStatusType.swift; sourceTree = "<group>"; };
@@ -77,7 +77,7 @@
 		629D5B502BF4C6A90078119F /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				629D5B512BF4C6C20078119F /* ReeMuxPlayerOptions.swift */,
+				629D5B512BF4C6C20078119F /* ReeMuxPlayerItem.swift */,
 				629D5B532BF4C8170078119F /* ReeMuxPlayerPlayerActionPublisherType.swift */,
 				629D5B572BF4C9150078119F /* ReeMuxPlayerPlayerStatusType.swift */,
 				629D5B552BF4C8FA0078119F /* ReeMuxPlayerStatusObserverType.swift */,
@@ -177,7 +177,7 @@
 				629D5B682BF4CB800078119F /* ReeMuxPlayerTimerObserverType.swift in Sources */,
 				629D5B602BF4C97F0078119F /* ReeMuxPlayerCoordinator.swift in Sources */,
 				629D5B662BF4C9C90078119F /* ReeMuxPlayerView.swift in Sources */,
-				629D5B522BF4C6C20078119F /* ReeMuxPlayerOptions.swift in Sources */,
+				629D5B522BF4C6C20078119F /* ReeMuxPlayerItem.swift in Sources */,
 				629D5B622BF4C9990078119F /* ReeMuxPlayerObserver.swift in Sources */,
 				629D5B562BF4C8FA0078119F /* ReeMuxPlayerStatusObserverType.swift in Sources */,
 				629D5B5A2BF4C9210078119F /* ReeMuxPlayerVideoStatusType.swift in Sources */,
@@ -403,8 +403,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/muxinc/mux-player-swift.git";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

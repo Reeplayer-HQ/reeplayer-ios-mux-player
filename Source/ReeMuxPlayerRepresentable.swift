@@ -13,28 +13,25 @@ import SwiftUI
 public struct ReeMuxPlayerRepresentable: UIViewControllerRepresentable {
     // MARK: Variables
 
-    let playbackId: String?
+    private let item: ReeMuxPlayerItem?
     private let playerActionPublisher: PassthroughSubject<ReeMuxPlayerPlayerActionPublisherType, Never>?
     private let statusObserver: PassthroughSubject<ReeMuxPlayerStatusObserverType, Never>?
     private let timerObserver: PassthroughSubject<ReeMuxPlayerTimerObserverType, Never>?
-    private let options: ReeMuxPlayerOptions?
 
     @State var playerViewController: AVPlayerViewController = .init()
 
     // MARK: Life Cycle
 
     public init(
-        playbackId: String?,
+        item: ReeMuxPlayerItem?,
         playerActionPublisher: PassthroughSubject<ReeMuxPlayerPlayerActionPublisherType, Never>?,
         statusObserver: PassthroughSubject<ReeMuxPlayerStatusObserverType, Never>?,
-        timerObserver: PassthroughSubject<ReeMuxPlayerTimerObserverType, Never>?,
-        options: ReeMuxPlayerOptions?
+        timerObserver: PassthroughSubject<ReeMuxPlayerTimerObserverType, Never>?
     ) {
-        self.playbackId = playbackId
+        self.item = item
         self.playerActionPublisher = playerActionPublisher
         self.statusObserver = statusObserver
         self.timerObserver = timerObserver
-        self.options = options
     }
 
     // MARK: Methods
@@ -57,11 +54,9 @@ public struct ReeMuxPlayerRepresentable: UIViewControllerRepresentable {
     }
 
     public func updateUIViewController(_ uiViewController: AVPlayerViewController, context: Context) {
-        // Check if the url has changed
-        context.coordinator.checkPlaybackIdChange(playbackId: playbackId)
+        // Check if the item has changed
+        context.coordinator.checkItemChange(item: item)
 
-        // There may be updates to the options, so we need to update the coordinator
-        context.coordinator.options = options
     }
 
     public func makeCoordinator() -> ReeMuxPlayerCoordinator {
@@ -69,8 +64,7 @@ public struct ReeMuxPlayerRepresentable: UIViewControllerRepresentable {
             playerViewController: playerViewController,
             playerActionPublisher: playerActionPublisher,
             statusObserver: statusObserver,
-            timerObserver: timerObserver,
-            options: options
+            timerObserver: timerObserver
         )
     }
 

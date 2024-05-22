@@ -13,17 +13,16 @@ struct ContentView: View {
     private let playerActionPublisher: PassthroughSubject<ReeMuxPlayerPlayerActionPublisherType, Never> = .init()
     private let statusObserver: PassthroughSubject<ReeMuxPlayerStatusObserverType, Never> = .init()
     private let timerObserver: PassthroughSubject<ReeMuxPlayerTimerObserverType, Never> = .init()
-    private let options: ReeMuxPlayerOptions = .init()
+    @State var item: ReeMuxPlayerItem? = nil
     @State var cancellables: Set<AnyCancellable> = []
 
     var body: some View {
         VStack {
             ReeMuxPlayerView(
-                playbackId: "qxb01i6T202018GFS02vp9RIe01icTcDCjVzQpmaB00CUisJ4",
+                item: item,
                 playerActionPublisher: playerActionPublisher,
                 statusObserver: statusObserver,
-                timerObserver: timerObserver,
-                options: options
+                timerObserver: timerObserver
             )
             .aspectRatio(16 / 9, contentMode: .fit)
             Spacer()
@@ -37,6 +36,19 @@ struct ContentView: View {
             .padding()
             Button("Play") {
                 playerActionPublisher.send(.Play)
+            }
+            .padding()
+
+            Button("Sample Video") {
+                item = .init(playbackId: "qxb01i6T202018GFS02vp9RIe01icTcDCjVzQpmaB00CUisJ4")
+            }
+            .padding()
+
+            Button("Sample Video with loop") {
+                item = .init(
+                    playbackId: "qxb01i6T202018GFS02vp9RIe01icTcDCjVzQpmaB00CUisJ4",
+                    loopRangeInMilliseconds: 15000 ... 25000
+                )
             }
             .padding()
         }

@@ -12,13 +12,12 @@ let package = Package(
             targets: ["ReeMuxPlayer"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/muxinc/mux-player-swift.git", branch: "main"),
+        .package(url: "https://github.com/muxinc/mux-player-swift.git", .upToNextMajor(from: "1.0.0")),
     ],
     targets: [
         .target(
             name: "ReeMuxPlayer",
             dependencies: [
                 .product(name: "MuxPlayerSwift", package: "mux-player-swift"),
-            ]
-        ),
+            ]),
     ])

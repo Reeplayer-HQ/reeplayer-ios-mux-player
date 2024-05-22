@@ -11,37 +11,33 @@ import SwiftUI
 public struct ReeMuxPlayerView: View {
     // MARK: Variables
 
-    private let playbackId: String?
+    private let item: ReeMuxPlayerItem?
     private let playerActionPublisher: PassthroughSubject<ReeMuxPlayerPlayerActionPublisherType, Never>?
     private let statusObserver: PassthroughSubject<ReeMuxPlayerStatusObserverType, Never>?
     private let timerObserver: PassthroughSubject<ReeMuxPlayerTimerObserverType, Never>?
-    private let options: ReeMuxPlayerOptions?
 
     // MARK: Life Cycle
 
     public init(
-        playbackId: String?,
+        item: ReeMuxPlayerItem?,
         playerActionPublisher: PassthroughSubject<ReeMuxPlayerPlayerActionPublisherType, Never>? = nil,
         statusObserver: PassthroughSubject<ReeMuxPlayerStatusObserverType, Never>? = nil,
-        timerObserver: PassthroughSubject<ReeMuxPlayerTimerObserverType, Never>? = nil,
-        options: ReeMuxPlayerOptions? = nil
+        timerObserver: PassthroughSubject<ReeMuxPlayerTimerObserverType, Never>? = nil
     ) {
-        self.playbackId = playbackId
+        self.item = item
         self.playerActionPublisher = playerActionPublisher
         self.statusObserver = statusObserver
         self.timerObserver = timerObserver
-        self.options = options
     }
 
     // MARK: Body Component
 
     public var body: some View {
         ReeMuxPlayerRepresentable(
-            playbackId: playbackId,
+            item: item,
             playerActionPublisher: playerActionPublisher,
             statusObserver: statusObserver,
-            timerObserver: timerObserver,
-            options: options
+            timerObserver: timerObserver
         )
     }
 }

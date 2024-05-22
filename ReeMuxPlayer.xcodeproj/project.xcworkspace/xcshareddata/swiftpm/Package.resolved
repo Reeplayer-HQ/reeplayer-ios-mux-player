@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/muxinc/mux-player-swift.git",
       "state" : {
-        "revision" : "ffc6b34243a1b28545d47997046814145f42f360",
-        "version" : "1.0.0"
+        "branch" : "main",
+        "revision" : "ffc6b34243a1b28545d47997046814145f42f360"
       }
     },
     {

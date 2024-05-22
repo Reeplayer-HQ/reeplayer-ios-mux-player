@@ -16,13 +16,10 @@ public class ReeMuxPlayerCoordinator: NSObject {
     private let playerActionPublisher: PassthroughSubject<ReeMuxPlayerPlayerActionPublisherType, Never>?
     private let statusObserver: PassthroughSubject<ReeMuxPlayerStatusObserverType, Never>?
     private let timerObserver: PassthroughSubject<ReeMuxPlayerTimerObserverType, Never>?
-    private var playbackId: String? = nil
+    private var currentItem: ReeMuxPlayerItem? = nil
     private let observer = ReeMuxPlayerObserver()
     private var cancellables = Set<AnyCancellable>()
     private var player: AVPlayer? { playerViewController.player }
-
-//    let player = AVPlayer()
-    var options: ReeMuxPlayerOptions?
 
     // MARK: Life Cycle
 
@@ -30,15 +27,13 @@ public class ReeMuxPlayerCoordinator: NSObject {
         playerViewController: AVPlayerViewController,
         playerActionPublisher: PassthroughSubject<ReeMuxPlayerPlayerActionPublisherType, Never>?,
         statusObserver: PassthroughSubject<ReeMuxPlayerStatusObserverType, Never>?,
-        timerObserver: PassthroughSubject<ReeMuxPlayerTimerObserverType, Never>?,
-        options: ReeMuxPlayerOptions?
+        timerObserver: PassthroughSubject<ReeMuxPlayerTimerObserverType, Never>?
     ) {
         // Set the playerViewController
         self.playerViewController = playerViewController
         self.playerActionPublisher = playerActionPublisher
         self.statusObserver = statusObserver
         self.timerObserver = timerObserver
-        self.options = options
 
         // Call the super init
         super.init()
@@ -84,27 +79,36 @@ public class ReeMuxPlayerCoordinator: NSObject {
         observer.delegate = nil
     }
 
-    // MARK: URL Methods
+    // MARK: Item Methods
 
-    /// Checks if the playbackId has changed. If so, it refreshes the video player with the new playbackId.
-    public func checkPlaybackIdChange(playbackId: String?) {
-        // Check if the playbackId is not nil
-        guard let playbackId = playbackId else {
+    /// Checks if the item changed. If so, it refreshes the video player with the new playbackId.
+    public func checkItemChange(item: ReeMuxPlayerItem?) {
+        // Check if the item is not nil
+        guard let newItem = item else {
             cleanVideoPlayer()
             return
         }
 
-        // Check if the playbackId has changed
-        guard playbackId != self.playbackId else { return }
+        // Check if the item is the same as the current item
+        let newPlaybackId = newItem.playbackId
+        if newPlaybackId != currentItem?.playbackId {
+            // Open the video player with the new playbackId
+            openPlaybackId(playbackId: newPlaybackId)
+        }
 
-        // Set the new playbackId
-        self.playbackId = playbackId
+        // Set the new item as the current item
+        currentItem = newItem
 
-        // Open the video player with the new playbackId
-        openPlaybackId(playbackId: playbackId)
+        // Set the new item settings
+        player?.isMuted = newItem.isMuted
+
+        // Check if the loopRangeInMilliseconds is set, then go to the lowerBound
+        if let loopRangeInMilliseconds = newItem.loopRangeInMilliseconds {
+            goTo(milliSeconds: loopRangeInMilliseconds.lowerBound)
+        }
     }
 
-    /// Opens the video player with the given URL
+    /// Opens the video player with the given playbackId
     private func openPlaybackId(playbackId: String) {
         // Remove observers from the current playerItem if exists
         if let playerItem = playerViewController.player?.currentItem {
@@ -121,9 +125,6 @@ public class ReeMuxPlayerCoordinator: NSObject {
         // Notify the statusObserver that the video player is not ready and is loading
         statusObserver?.send(.PlayerStatusChanged(type: .Loading))
         statusObserver?.send(.VideoStatusChanged(type: .NotReady))
-
-        // Set the player's volume and mute status
-        player?.isMuted = options?.isMuted ?? false
 
         // Set AVPlayer settings
         player?.audiovisualBackgroundPlaybackPolicy = .continuesIfPossible
@@ -208,7 +209,7 @@ extension ReeMuxPlayerCoordinator: ReeMuxPlayerObserverDelegate {
         timerObserver?.send(.CurrentTimeChanged(milliSeconds: currentTimeInMilliSeconds))
 
         // Check if loopRangeInMilliseconds is set and the currentTimeInMilliSeconds is greater than the upperBound, then go to the lowerBound
-        if let loopRangeInMilliseconds = options?.loopRangeInMilliseconds, currentTimeInMilliSeconds > loopRangeInMilliseconds.upperBound {
+        if let loopRangeInMilliseconds = currentItem?.loopRangeInMilliseconds, currentTimeInMilliSeconds > loopRangeInMilliseconds.upperBound {
             let lowerBoundInMilliSeconds = loopRangeInMilliseconds.lowerBound
             goTo(milliSeconds: lowerBoundInMilliSeconds)
         }
@@ -251,7 +252,7 @@ extension ReeMuxPlayerCoordinator: ReeMuxPlayerObserverDelegate {
                 self.timerObserver?.send(.TotalTimeChanged(milliSeconds: totalTimeInMilliSeconds))
 
                 // Check if the video should play automatically
-                if let autoPlayVideoWhenReady = self.options?.autoPlayVideoWhenReady, autoPlayVideoWhenReady {
+                if let autoPlayVideoWhenReady = self.currentItem?.autoPlayVideoWhenReady, autoPlayVideoWhenReady {
                     self.playVideo()
                 }
 
@@ -271,8 +272,12 @@ extension ReeMuxPlayerCoordinator: ReeMuxPlayerObserverDelegate {
         // Check if the player exist
         guard let player = playerViewController.player else { return }
 
-        guard let loopVideoWhenEndReached = options?.loopVideoWhenEndReached, loopVideoWhenEndReached else { return }
+        // Seek to the beginning
         player.seek(to: .zero)
-        player.play()
+
+        // Check if the video should loop when it reaches the end
+        if let loopVideoWhenEndReached = currentItem?.loopVideoWhenEndReached, loopVideoWhenEndReached {
+            player.play()
+        }
     }
 }
