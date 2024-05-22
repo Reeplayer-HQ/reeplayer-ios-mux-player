@@ -56,7 +56,6 @@ public struct ReeMuxPlayerRepresentable: UIViewControllerRepresentable {
     public func updateUIViewController(_ uiViewController: AVPlayerViewController, context: Context) {
         // Check if the item has changed
         context.coordinator.checkItemChange(item: item)
-
     }
 
     public func makeCoordinator() -> ReeMuxPlayerCoordinator {
